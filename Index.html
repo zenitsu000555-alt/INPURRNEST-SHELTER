@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IoT Monitoring</title>
+
+<style>
+    body {
+        font-family: Arial;
+        background: #1e1e2f;
+        color: white;
+        text-align: center;
+        padding-top: 40px;
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        flex-wrap: wrap;
+    }
+
+    .card {
+        background: #2c2c3e;
+        padding: 25px;
+        border-radius: 15px;
+        width: 300px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+
+    button {
+        padding: 12px 25px;
+        margin-bottom: 15px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        background: #3498db;
+        color: white;
+        cursor: pointer;
+    }
+
+    .data {
+        font-size: 16px;
+        margin: 8px 0;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>IoT Monitoring Dashboard</h1>
+
+<div class="container">
+
+    <!-- ROOM 1 -->
+    <div class="card">
+        <h2>Room 1</h2>
+        <button onclick="loadRoom1()">Load Data (Room 1)</button>
+        <div class="data" id="temp1">Temp: --</div>
+        <div class="data" id="water1">Water: --</div>
+        <div class="data" id="food1">Food: --</div>
+    </div>
+
+    <!-- ROOM 2 -->
+    <div class="card">
+        <h2>Room 2</h2>
+        <button onclick="loadRoom2()">Load Data (Room 2)</button>
+        <div class="data" id="temp2">Temp: --</div>
+        <div class="data" id="water2">Water: --</div>
+        <div class="data" id="food2">Food: --</div>
+    </div>
+
+</div>
+
+<script>
+const token = "K_Wi3sbXnXIBZIPz8I1taOAUTeSKJ5DQ";
+
+// ROOM 1
+function loadRoom1() {
+    Promise.all([
+        fetch(`https://blynk.cloud/external/api/get?token=${token}&V0`).then(res => res.text()),
+        fetch(`https://blynk.cloud/external/api/get?token=${token}&V1`).then(res => res.text()),
+        fetch(`https://blynk.cloud/external/api/get?token=${token}&V2`).then(res => res.text())
+    ])
+    .then(([temp, water, food]) => {
+        document.getElementById("temp1").innerText = "Temp: " + temp + " °C";
+        document.getElementById("water1").innerText = "Water: " + water + " %";
+        document.getElementById("food1").innerText = "Food: " + food;
+    });
+}
+
+// ROOM 2
+function loadRoom2() {
+    Promise.all([
+        fetch(`https://blynk.cloud/external/api/get?token=${token}&V3`).then(res => res.text()),
+        fetch(`https://blynk.cloud/external/api/get?token=${token}&V4`).then(res => res.text()),
+        fetch(`https://blynk.cloud/external/api/get?token=${token}&V5`).then(res => res.text())
+    ])
+    .then(([temp, water, food]) => {
+        document.getElementById("temp2").innerText = "Temp: " + temp + " °C";
+        document.getElementById("water2").innerText = "Water: " + water + " %";
+        document.getElementById("food2").innerText = "Food: " + food;
+    });
+}
+
+// Auto refresh both
+setInterval(() => {
+    loadRoom1();
+    loadRoom2();
+}, 3000);
+
+// Initial load
+loadRoom1();
+loadRoom2();
+
+</script>
+
+</body>
+</html>
